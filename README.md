@@ -1,1 +1,2 @@
 # AirplaneRecognition
+This project is dedicated to developing a military aircraft recognition tool using Python and TensorFlow. It combines Python's accessibility and flexibility with TensorFlow's powerful machine learning and deep learning libraries to recognize and classify different types of military aircraft from images. The goal is to create a highly accurate and efficient recognition system. Currently in the development phase.
