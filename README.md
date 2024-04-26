@@ -184,3 +184,7 @@ Sample below:
 ![image](https://github.com/MaciejGrzybacz/AirplaneRecognition/assets/128727060/af8dfbba-c5b3-4f43-bdd1-0ae30beb018e)
 Test image was downloaded from Google.
 
+## Authors
+Maciej Grzybacz
+Michał Proć
+Michał Hemperek
