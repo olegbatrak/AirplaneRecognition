@@ -1,18 +1,17 @@
 import pathlib
 import os
 import sys
-
-from tensorflow.python.keras.callbacks import EarlyStopping
-
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 sys.stderr = open(os.devnull, 'w')
+
+from tensorflow.python.keras.callbacks import EarlyStopping
 import keras
 import tensorflow as tf
 from tensorflow.keras import layers, Sequential
 import numpy as np
 import matplotlib.pyplot as plt
 
-dataset_url = '../Data_updated'
+dataset_url = '../Data'
 data_dir = pathlib.Path(dataset_url)
 
 batch_size = 128
@@ -27,16 +26,13 @@ with tf.device('/GPU:0'):
 
     data_augmentation = keras.Sequential(
         [
-            layers.RandomFlip("horizontal",
-                              input_shape=(img_height,
-                                           img_width,
-                                           3)),
+            layers.RandomFlip("horizontal", input_shape=(img_height,img_width,3)),
             layers.RandomRotation(0.1),
             layers.RandomZoom(0.1),
         ]
     )
 
-    optimizer = tf.keras.optimizers.SGD(learning_rate=0.1, momentum=0.5, nesterov=True)
+    optimizer = tf.keras.optimizers.SGD(learning_rate=0.1, momentum=0.1, nesterov=True)
 
     train_ds = tf.keras.utils.image_dataset_from_directory(
         data_dir,
@@ -64,40 +60,6 @@ with tf.device('/GPU:0'):
     num_classes = len(class_names)
 
     model = Sequential([
-        # #VGG19
-        # layers.Conv2D(64, (3, 3), activation='relu', padding='same', input_shape=(img_height, img_width, 3)),
-        # layers.Conv2D(64, (3, 3), activation='relu', padding='same'),
-        # layers.MaxPooling2D((2, 2), strides=(2, 2)),
-        #
-        # layers.Conv2D(128, (3, 3), activation='relu', padding='same'),
-        # layers.Conv2D(128, (3, 3), activation='relu', padding='same'),
-        # layers.MaxPooling2D((2, 2), strides=(2, 2)),
-        #
-        # layers.Conv2D(256, (3, 3), activation='relu', padding='same'),
-        # layers.Conv2D(256, (3, 3), activation='relu', padding='same'),
-        # layers.Conv2D(256, (3, 3), activation='relu', padding='same'),
-        # layers.Conv2D(256, (3, 3), activation='relu', padding='same'),
-        # layers.MaxPooling2D((2, 2), strides=(2, 2)),
-        #
-        # layers.Conv2D(512, (3, 3), activation='relu', padding='same'),
-        # layers.Conv2D(512, (3, 3), activation='relu', padding='same'),
-        # layers.Conv2D(512, (3, 3), activation='relu', padding='same'),
-        # layers.Conv2D(512, (3, 3), activation='relu', padding='same'),
-        # layers.MaxPooling2D((2, 2), strides=(2, 2)),
-        #
-        # layers.Conv2D(512, (3, 3), activation='relu', padding='same'),
-        # layers.Conv2D(512, (3, 3), activation='relu', padding='same'),
-        # layers.Conv2D(512, (3, 3), activation='relu', padding='same'),
-        # layers.Conv2D(512, (3, 3), activation='relu', padding='same'),
-        # layers.MaxPooling2D((2, 2), strides=(2, 2)),
-        #
-        # layers.Flatten(),
-        #
-        # layers.Dense(4096, activation='relu'),
-        # layers.Dense(4096, activation='relu'),
-        # layers.Dense(num_classes, activation='softmax')
-
-
         layers.Rescaling(1. / 255, input_shape=(img_height, img_width, 3)),
         layers.Conv2D(8, kernel_size=(2,2), padding='same', activation='relu'),
         layers.MaxPooling2D(),
@@ -109,23 +71,23 @@ with tf.device('/GPU:0'):
         layers.MaxPooling2D(),
         layers.BatchNormalization(),
         layers.Flatten(),
-        layers.Dense(8192, activation='relu'),
+        layers.Dense(8192, activation='elu'),
         layers.Dropout(0.75),
-        layers.Dense(2048, activation='relu'),
+        layers.Dense(2048, activation='elu'),
         layers.Dropout(0.5),
-        layers.Dense(512, activation='relu'),
+        layers.Dense(512, activation='elu'),
         layers.Dropout(0.25),
-        layers.Dense(128, activation='relu'),
+        layers.Dense(128, activation='elu'),
         layers.Dense(num_classes, activation='softmax')
     ])
 
     model.compile(optimizer=optimizer,
-                  loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+                  loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False),
                   metrics=['accuracy'])
 
     early_stopping = EarlyStopping(
         monitor='val_accuracy',
-        patience=20,
+        patience=10,
         verbose=1,
         restore_best_weights=False
     )
@@ -133,7 +95,7 @@ with tf.device('/GPU:0'):
     history = model.fit(
         train_ds,
         validation_data=val_ds,
-        epochs=100,
+        epochs=25,
         callbacks=[early_stopping]
     )
 
@@ -145,7 +107,7 @@ val_loss = history.history['val_loss']
 
 epochs_range = range(len(loss))
 
-model.save('my_model.h5')
+model.save('the_new_model.h5')
 plt.figure(figsize=(8, 8))
 plt.subplot(1, 2, 1)
 plt.plot(epochs_range, acc, label='Training Accuracy')

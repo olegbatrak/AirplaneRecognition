@@ -1,9 +1,10 @@
+# generates additional data for model training by rotating and flipping images
 import os
 from PIL import Image
 
 
 def rotate_and_flip_images_in_directory(directory_path):
-    # Check if the given path is a directory
+
     if not os.path.isdir(directory_path):
         print("The provided path is not a directory.")
         return
@@ -24,9 +25,6 @@ def rotate_and_flip_images_in_directory(directory_path):
                         h_flip_img = img.transpose(Image.FLIP_LEFT_RIGHT)
                         h_flip_img.save(f"{os.path.splitext(image_path)[0]}_hflip.jpg")
 
-                        # Flip the image vertically
-                        #v_flip_img = img.transpose(Image.FLIP_TOP_BOTTOM)
-                        #v_flip_img.save(f"{os.path.splitext(image_path)[0]}_vflip.jpg")
 
                         # Flip the image horizontally and vertically
                         hv_flip_img = h_flip_img.transpose(Image.FLIP_TOP_BOTTOM)
@@ -43,6 +41,5 @@ def rotate_and_flip_images_in_directory(directory_path):
     print(f"Total successful operations: {successful_operations}")
 
 
-# Example usage
-directory_path = R'C:\Users\006ma\PycharmProjects\AirplaneRecognition\Data_updated'
+directory_path = R'..\Data'
 rotate_and_flip_images_in_directory(directory_path)
