@@ -1,8 +1,10 @@
+# Quickly verifies if all images are ok
+
 from PIL import Image
 import pathlib
 
 # The path to your dataset
-dataset_path = R'/Data_updated'
+dataset_path = R'/Data'
 data_dir = pathlib.Path(dataset_path)
 
 # List to hold names of corrupt files
