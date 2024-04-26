@@ -185,6 +185,6 @@ Sample below:
 Test image was downloaded from Google.
 
 ## Authors
-Maciej Grzybacz
-Michał Proć
-Michał Hemperek
+* Maciej Grzybacz
+* Michał Proć
+* Michał Hemperek
