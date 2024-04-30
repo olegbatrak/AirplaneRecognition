@@ -9,7 +9,7 @@ This project is dedicated to developing a military aircraft recognition tool usi
 
 ```plaintext
 Application
-      app.py: The main application file to launch the model in a web-based interface.
+      app.py: The main application file to launch the model in a graphical interface.
 Model
       model.py: Contains the definition and compilation of the CNN model.
 Utils
