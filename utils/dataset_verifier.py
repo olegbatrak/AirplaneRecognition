@@ -4,7 +4,7 @@ from PIL import Image
 import pathlib
 
 # The path to your dataset
-dataset_path = R'/Data'
+dataset_path = R'/data'
 data_dir = pathlib.Path(dataset_path)
 
 # List to hold names of corrupt files

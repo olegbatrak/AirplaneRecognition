@@ -1,6 +1,7 @@
 import pathlib
 import os
 import sys
+
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 sys.stderr = open(os.devnull, 'w')
 
@@ -11,7 +12,7 @@ from tensorflow.keras import layers, Sequential
 import numpy as np
 import matplotlib.pyplot as plt
 
-dataset_url = '../Data'
+dataset_url = '../data'
 data_dir = pathlib.Path(dataset_url)
 
 batch_size = 128
@@ -26,7 +27,7 @@ with tf.device('/GPU:0'):
 
     data_augmentation = keras.Sequential(
         [
-            layers.RandomFlip("horizontal", input_shape=(img_height,img_width,3)),
+            layers.RandomFlip("horizontal", input_shape=(img_height, img_width, 3)),
             layers.RandomRotation(0.1),
             layers.RandomZoom(0.1),
         ]
@@ -61,13 +62,13 @@ with tf.device('/GPU:0'):
 
     model = Sequential([
         layers.Rescaling(1. / 255, input_shape=(img_height, img_width, 3)),
-        layers.Conv2D(8, kernel_size=(2,2), padding='same', activation='relu'),
+        layers.Conv2D(8, kernel_size=(2, 2), padding='same', activation='relu'),
         layers.MaxPooling2D(),
         layers.BatchNormalization(),
         layers.Conv2D(16, kernel_size=(3, 3), padding='same', activation='relu'),
         layers.MaxPooling2D(),
         layers.BatchNormalization(),
-        layers.Conv2D(32, kernel_size=(4,4), padding='same', activation='relu'),
+        layers.Conv2D(32, kernel_size=(4, 4), padding='same', activation='relu'),
         layers.MaxPooling2D(),
         layers.BatchNormalization(),
         layers.Flatten(),
@@ -107,7 +108,8 @@ val_loss = history.history['val_loss']
 
 epochs_range = range(len(loss))
 
-model.save('the_new_model.h5')
+model.save('image_recognition_model.h5')
+
 plt.figure(figsize=(8, 8))
 plt.subplot(1, 2, 1)
 plt.plot(epochs_range, acc, label='Training Accuracy')

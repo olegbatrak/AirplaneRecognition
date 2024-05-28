@@ -8,11 +8,11 @@ This project is dedicated to developing a military aircraft recognition tool usi
 
 
 ```plaintext
-Application
+application
       app.py: The main application file to launch the model in a graphical interface.
-Model
+model
       model.py: Contains the definition and compilation of the CNN model.
-Utils
+utils
       data_preprocessing.py: Script for preprocessing the image data.
       data_summary.py: Generates a summary of the dataset.
       dataset_cleaning.py: Utility for cleaning and validating the dataset.
@@ -23,12 +23,12 @@ Utils
       small_files_remover.py: Removes files below a certain size threshold.
 ```
 
-## Model 
+## model 
 
 The model, defined in model.py, is a sequential CNN.. It consists of several layers including Rescaling, Conv2D, MaxPooling2D, BatchNormalization, Flatten, Dense, and Dropout. The detailed architecture is as follows:
 
 ```plaintext
-Model: "sequential_1"
+model: "sequential_1"
 _____________________________________________________________________________________
  Layer (type)                                   Output Shape              Param #
 =====================================================================================
@@ -57,7 +57,7 @@ Trainable params: 85,026,356
 Non-trainable params: 112
 _____________________________________________________________________________________
 ```
-## Data 
+## data 
 
 The dataset comprises 318,588 images belonging to 44 different classes of military aircraft, with a training set of 254,871 images and a validation set of 63,717 images. The images are organized in directories named after the aircraft models.
 

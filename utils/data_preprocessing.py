@@ -4,7 +4,6 @@ from PIL import Image
 
 
 def rotate_and_flip_images_in_directory(directory_path):
-
     if not os.path.isdir(directory_path):
         print("The provided path is not a directory.")
         return
@@ -25,7 +24,6 @@ def rotate_and_flip_images_in_directory(directory_path):
                         h_flip_img = img.transpose(Image.FLIP_LEFT_RIGHT)
                         h_flip_img.save(f"{os.path.splitext(image_path)[0]}_hflip.jpg")
 
-
                         # Flip the image horizontally and vertically
                         hv_flip_img = h_flip_img.transpose(Image.FLIP_TOP_BOTTOM)
                         hv_flip_img.save(f"{os.path.splitext(image_path)[0]}_hvflip.jpg")
@@ -41,5 +39,5 @@ def rotate_and_flip_images_in_directory(directory_path):
     print(f"Total successful operations: {successful_operations}")
 
 
-directory_path = R'..\Data'
+directory_path = R'..\data'
 rotate_and_flip_images_in_directory(directory_path)

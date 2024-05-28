@@ -1,6 +1,7 @@
 # Removes all images generated in data_preprocessing and oversampler scripts
 import os
 
+
 def delete_rotated_images(directory_path):
     if not os.path.isdir(directory_path):
         print("The provided path is not a directory.")
@@ -23,6 +24,7 @@ def delete_rotated_images(directory_path):
     else:
         print("No 'rotated' files found to delete.")
 
+
 # Example usage
-directory_path = R'..\Data'
+directory_path = R'..\data'
 delete_rotated_images(directory_path)

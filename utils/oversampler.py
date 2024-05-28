@@ -44,5 +44,5 @@ def oversample_images(data_dir):
 
 
 if __name__ == "__main__":
-    data_dir = R'..\Data'
+    data_dir = R'..\data'
     oversample_images(data_dir)
