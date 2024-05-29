@@ -40,6 +40,10 @@ class ImageSelector(QWidget):
                 height: 50px;
                 font-size: 18px;
             }
+            QPushButton:hover {
+                background-color: #222222;
+                color: yellow;
+            }
             QLabel {
                 color: yellow;
             }
