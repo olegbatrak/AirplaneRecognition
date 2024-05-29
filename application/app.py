@@ -4,12 +4,15 @@ import numpy as np
 import tensorflow as tf
 import os
 from PIL import Image, ImageDraw, ImageFont
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QLabel, QFileDialog, QDesktopWidget
-from PyQt5.QtGui import QPixmap, QFont
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QLabel, QFileDialog, QDesktopWidget, \
+    QHBoxLayout, QMessageBox
+from PyQt5.QtGui import QPixmap, QIcon, QFont
 from PyQt5.QtCore import Qt
 
 IMAGE_RECOGNITION_MODEL = R'..\trained_models\image_recognition_model.h5'
 IMAGE_DETECTOR_MODEL = R'..\trained_models\image_detector_model.h5'
+
+FAVICON_PATH = R'.\favicon.ico'
 
 
 class ImageSelector(QWidget):
@@ -19,9 +22,28 @@ class ImageSelector(QWidget):
         self.recognition_model = tf.keras.models.load_model(IMAGE_RECOGNITION_MODEL)
 
     def initUI(self):
-        self.setWindowTitle('Image Selection and Recognition')
+        self.setWindowTitle('Image - Selection, Detection, Recognition')
         self.resize(1920, 1080)
+        self.setWindowIcon(QIcon(FAVICON_PATH))
         self.center()
+
+        # Set the style
+        self.setStyleSheet("""
+            QWidget {
+                background-color: black;
+                color: yellow;
+            }
+            QPushButton {
+                background-color: yellow;
+                color: black;
+                border: 1px solid black;
+                height: 50px;
+                font-size: 18px;
+            }
+            QLabel {
+                color: yellow;
+            }
+        """)
 
         # Layout
         layout = QVBoxLayout()
@@ -33,10 +55,35 @@ class ImageSelector(QWidget):
         layout.addWidget(self.imageLabel)
         layout.setStretchFactor(self.imageLabel, 5)
 
+        # Button layout
+        button_layout = QHBoxLayout()
+
         # Button to open the file dialog
         btnOpenFileDialog = QPushButton('Open photo', self)
-        btnOpenFileDialog.clicked.connect(self.openFileDialog)
-        layout.addWidget(btnOpenFileDialog)
+        btnOpenFileDialog.clicked.connect(self.open_file_dialog)
+        button_layout.addWidget(btnOpenFileDialog)
+
+        # Button to download the photo
+        btnDownloadPhoto = QPushButton('Download photo', self)
+        btnDownloadPhoto.clicked.connect(self.download_photo)
+        button_layout.addWidget(btnDownloadPhoto)
+
+        # Set button layout spacing and margins
+        button_layout.setSpacing(10)
+        button_layout.setContentsMargins(10, 10, 10, 10)
+        layout.addLayout(button_layout)
+
+        # Set button stretch factors
+        button_layout.setStretch(0, 4)
+        button_layout.setStretch(1, 4)
+
+        # Status label at the bottom
+        self.statusLabel = QLabel('Select an image to display')
+        self.statusLabel.setAlignment(Qt.AlignCenter)
+        font = QFont('Arial', 16, QFont.Bold)
+        self.statusLabel.setFont(font)
+        self.statusLabel.setContentsMargins(10, 10, 10, 10)
+        layout.addWidget(self.statusLabel)
 
         self.setLayout(layout)
 
@@ -46,7 +93,7 @@ class ImageSelector(QWidget):
         qr.moveCenter(cp)
         self.move(qr.topLeft())
 
-    def openFileDialog(self):
+    def open_file_dialog(self):
         options = QFileDialog.Options()
         file_name, _ = QFileDialog.getOpenFileName(self, "Choose a photo", "",
                                                    "Image Files (*.jpg *.jpeg *.png *.bmp)", options=options)
@@ -69,8 +116,40 @@ class ImageSelector(QWidget):
                 pixmap.scaled(self.imageLabel.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation))
 
             # Clean up temporary file
-            # if os.path.exists(temp_output_path):
-            #     os.remove(temp_output_path)
+            if os.path.exists(temp_output_path):
+                os.remove(temp_output_path)
+
+    def download_photo(self):
+        current_pixmap = self.imageLabel.pixmap()
+        if current_pixmap:
+            options = QFileDialog.Options()
+            save_path, _ = QFileDialog.getSaveFileName(self, "Save photo", "",
+                                                       "PNG Files (*.png);;All Files (*)", options=options)
+            if save_path:
+                current_pixmap.save(save_path)
+        else:
+            msg = QMessageBox(self)
+            msg.setIcon(QMessageBox.Warning)
+            msg.setText("There is no image to save.")
+            msg.setWindowTitle("No Image")
+            msg.setStandardButtons(QMessageBox.Ok)
+
+            # Apply custom styles to the QMessageBox
+            msg.setStyleSheet("""
+                QMessageBox {
+                    background-color: black;
+                    color: yellow;
+                }
+                QLabel {
+                    color: yellow;
+                    font-size: 18px;
+                }
+            """)
+
+            ok_button = msg.button(QMessageBox.Ok)
+            ok_button.setMinimumWidth(200)
+
+            msg.exec_()
 
     def add_text_to_image(self, image_path, text, output_path):
         # Open the original image
@@ -100,7 +179,7 @@ class ImageSelector(QWidget):
 
         # Draw the text onto the new image, centered within the yellow background
         text_x_position = (original_width - text_width) // 2
-        text_y_position = original_height + 10
+        text_y_position = original_height + 8
         draw.text((text_x_position, text_y_position), text, font=font, fill="black")
 
         # Save the new image
@@ -120,6 +199,7 @@ class ImageSelector(QWidget):
         predicted_class_index = np.argmax(prediction)
         predicted_class = class_labels[predicted_class_index]
 
+        self.statusLabel.setText(f'Predicted class: {predicted_class}')
         return predicted_class
 
 
