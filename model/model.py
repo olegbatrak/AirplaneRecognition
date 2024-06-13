@@ -2,15 +2,15 @@ import pathlib
 import os
 import sys
 
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-sys.stderr = open(os.devnull, 'w')
-
 from tensorflow.python.keras.callbacks import EarlyStopping
 import keras
 import tensorflow as tf
 from tensorflow.keras import layers, Sequential
 import numpy as np
 import matplotlib.pyplot as plt
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+sys.stderr = open(os.devnull, 'w')
 
 dataset_url = '../data'
 data_dir = pathlib.Path(dataset_url)

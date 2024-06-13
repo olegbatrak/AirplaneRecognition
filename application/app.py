@@ -9,8 +9,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QLa
 from PyQt5.QtGui import QPixmap, QIcon, QFont
 from PyQt5.QtCore import Qt
 
-IMAGE_RECOGNITION_MODEL = R'..\trained_models\image_recognition_model.h5'
-IMAGE_DETECTOR_MODEL = R'..\trained_models\image_detector_model.h5'
+IMAGE_RECOGNITION_MODEL = R'..\model\image_recognition_model.h5'
 
 FAVICON_PATH = R'.\favicon.ico'
 
@@ -22,7 +21,7 @@ class ImageSelector(QWidget):
         self.recognition_model = tf.keras.models.load_model(IMAGE_RECOGNITION_MODEL)
 
     def initUI(self):
-        self.setWindowTitle('Image - Selection, Detection, Recognition')
+        self.setWindowTitle('Image - Selection, Recognition')
         self.resize(1920, 1080)
         self.setWindowIcon(QIcon(FAVICON_PATH))
         self.center()
@@ -111,7 +110,7 @@ class ImageSelector(QWidget):
             predicted_class = self.get_and_display_prediction(prediction)
 
             # Add text to the image
-            temp_output_path = 'temp_image_with_text.png'
+            temp_output_path = "temp_image_with_text.png"
             self.add_text_to_image(file_name, predicted_class, temp_output_path)
 
             # Load the modified image with QPixmap
@@ -165,7 +164,10 @@ class ImageSelector(QWidget):
 
         # Draw the text background onto the new image
         draw = ImageDraw.Draw(original_image)
-        bbox = draw.textbbox((0, 0), text, font=font)
+        if text == "":
+            bbox = draw.textbbox((0, 0), "None", font=font)
+        else:
+            bbox = draw.textbbox((0, 0), text, font=font)
         text_width = bbox[2] - bbox[0]
         text_height = bbox[3] - bbox[1]
 
@@ -179,7 +181,10 @@ class ImageSelector(QWidget):
         # Draw the full-width yellow rectangle
         background_position = (0, original_height, original_width, original_height + text_height + 20)
         draw = ImageDraw.Draw(new_image)
-        draw.rectangle(background_position, fill="yellow")
+        if text == "":
+            draw.rectangle(background_position, fill="red")
+        else:
+            draw.rectangle(background_position, fill="yellow")
 
         # Draw the text onto the new image, centered within the yellow background
         text_x_position = (original_width - text_width) // 2
@@ -201,9 +206,16 @@ class ImageSelector(QWidget):
         class_labels = [entry for entry in all_entries if os.path.isdir(os.path.join(directory_path, entry))]
 
         predicted_class_index = np.argmax(prediction)
-        predicted_class = class_labels[predicted_class_index]
+        max_prediction_value = prediction[0][predicted_class_index]
 
-        self.statusLabel.setText(f'Predicted class: {predicted_class}')
+        print(prediction)
+        if max_prediction_value >= 0.9:
+            predicted_class = class_labels[predicted_class_index]
+            self.statusLabel.setText(f'Predicted class: {predicted_class}')
+        else:
+            predicted_class = ""
+            self.statusLabel.setText('Cannot predict class')
+
         return predicted_class
 
 
