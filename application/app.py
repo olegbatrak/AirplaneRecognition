@@ -201,9 +201,13 @@ class ImageSelector(QWidget):
         return img_array
 
     def get_and_display_prediction(self, prediction):
-        directory_path = '../data'
-        all_entries = os.listdir(directory_path)
-        class_labels = [entry for entry in all_entries if os.path.isdir(os.path.join(directory_path, entry))]
+        class_labels = [
+            "A10", "A400M", "AV8B", "B1", "B2", "B52", "C17", "C2", "C5", "E2", "E7",
+            "EF2000", "F117", "F14", "F15", "F16", "F18", "F22", "F35", "F4", "J10",
+            "J20", "JAS39", "KC135", "Mig31", "Mirage2000", "MQ9", "P3", "Rafale",
+            "RQ4", "SR71", "Su24", "Su25", "Su34", "Su57", "Tornado", "Tu160", "Tu95",
+            "U2", "US2", "V22", "Vulcan", "XB70", "YF23"
+        ]
 
         predicted_class_index = np.argmax(prediction)
         max_prediction_value = prediction[0][predicted_class_index]
